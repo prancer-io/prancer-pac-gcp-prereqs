@@ -431,7 +431,7 @@ func DeleteWorkloadAndCluster(deleteWorkloadCluster DeleteWorkloadConfig) Respon
 		return response
 	}
 
-	if !deleteWorkloadCluster.DeleteCluster {
+	if strings.ToLower(deleteWorkloadCluster.DeleteCluster) != "true" {
 		response = Response{
 			Status:     "Success",
 			StatusCode: 200,
