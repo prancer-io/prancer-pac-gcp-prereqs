@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/compute/v1"
@@ -285,7 +286,9 @@ func CreateWorkloadDeployment(createWorkloadConfig CreateWorkloadConfig) Respons
 		return response
 	}
 
+	reg := regexp.MustCompile(`[^\w\d-]`)
 	appName = strings.ToLower(strings.ReplaceAll(strings.ReplaceAll(createWorkloadConfig.ApplicationName, " ", "-"), "_", "-"))
+	appName = reg.ReplaceAllString(appName, "")
 
 	nameSpace = fmt.Sprintf("%s-%s", appName, "namespace")
 	configMap = fmt.Sprintf("%s-%s", appName, "configmap")
@@ -428,7 +431,7 @@ func DeleteWorkloadAndCluster(deleteWorkloadCluster DeleteWorkloadConfig) Respon
 		return response
 	}
 
-	if !deleteWorkloadCluster.DeleteCluster {
+	if strings.ToLower(deleteWorkloadCluster.DeleteCluster) != "true" {
 		response = Response{
 			Status:     "Success",
 			StatusCode: 200,

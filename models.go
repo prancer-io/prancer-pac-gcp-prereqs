@@ -33,7 +33,7 @@ type DeleteWorkloadConfig struct {
 	ConfigMap     string `json:"configmap" valid:"required"`
 	Deployment    string `json:"deployment" valid:"required"`
 	Parent        string `json:"parent" valid:"required"`
-	DeleteCluster bool   `json:"deleteCluster" valid:"required"`
+	DeleteCluster string `json:"deleteCluster" valid:"required"`
 }
 
 type Response struct {

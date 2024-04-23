@@ -101,6 +101,8 @@ func CreateConfigMap(configmap, namespace string, clientset kubernetes.Interface
 }
 
 func BuildDeployment(configMap, deploymentName string, createWorkloadConfig CreateWorkloadConfig) *appsv1.Deployment {
+	allowPrivileged := true
+
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: deploymentName,
@@ -132,6 +134,12 @@ func BuildDeployment(configMap, deploymentName string, createWorkloadConfig Crea
 											Name: configMap,
 										},
 									},
+								},
+							},
+							SecurityContext: &v1.SecurityContext{
+								AllowPrivilegeEscalation: &allowPrivileged,
+								Capabilities: &v1.Capabilities{
+									Add: []v1.Capability{"NET_RAW"},
 								},
 							},
 						},
