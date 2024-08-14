@@ -54,6 +54,7 @@ func RunPAC(w http.ResponseWriter, r *http.Request) {
 		r.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 		form := new(CreateClusterConfig)
 		if err := json.NewDecoder(r.Body).Decode(&form); err != nil {
+			fmt.Println("Invalid request parameter: ", err)
 			response = Response{
 				Status:     "Fail",
 				StatusCode: 400,
@@ -66,6 +67,7 @@ func RunPAC(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if _, err = govalidator.ValidateStruct(form); err != nil {
+			fmt.Println("Request validation error: ", err)
 			response = Response{
 				Status:     "Fail",
 				StatusCode: 400,
@@ -175,6 +177,7 @@ func CreateCluster(createClusterConfig CreateClusterConfig) Response {
 	ctx := context.Background()
 	containerService, err = container.NewService(ctx)
 	if err != nil {
+		fmt.Println("Failed to create container service. ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -205,6 +208,7 @@ func CreateCluster(createClusterConfig CreateClusterConfig) Response {
 
 	_, err = containerService.Projects.Locations.Clusters.Create(createClusterConfig.Parent, rb).Context(ctx).Do()
 	if err != nil {
+		fmt.Println("Failed to create cluster ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -215,6 +219,7 @@ func CreateCluster(createClusterConfig CreateClusterConfig) Response {
 
 	defaultCredentials, err = google.FindDefaultCredentials(ctx, compute.ComputeScope)
 	if err != nil {
+		fmt.Println("Failed to find default credentials ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -248,6 +253,7 @@ func CreateWorkloadDeployment(createWorkloadConfig CreateWorkloadConfig) Respons
 	ctx := context.Background()
 	containerService, err = container.NewService(ctx)
 	if err != nil {
+		fmt.Println("Failed to create container service: ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -258,6 +264,7 @@ func CreateWorkloadDeployment(createWorkloadConfig CreateWorkloadConfig) Respons
 
 	cluster, err = container.NewProjectsLocationsClustersService(containerService).Get(createWorkloadConfig.ClusterPath).Do()
 	if err != nil {
+		fmt.Println("Failed to create cluster service: ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -268,6 +275,7 @@ func CreateWorkloadDeployment(createWorkloadConfig CreateWorkloadConfig) Respons
 
 	creds, err := google.FindDefaultCredentials(ctx, container.CloudPlatformScope)
 	if err != nil {
+		fmt.Println("Failed to create default credentials: ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -278,6 +286,7 @@ func CreateWorkloadDeployment(createWorkloadConfig CreateWorkloadConfig) Respons
 
 	clientset, err := GetGKEClientset(cluster, creds.TokenSource)
 	if err != nil {
+		fmt.Println("Failed to create GKE client: ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -296,6 +305,7 @@ func CreateWorkloadDeployment(createWorkloadConfig CreateWorkloadConfig) Respons
 
 	namespace, _ := CreateNamespace(nameSpace, clientset, ctx)
 	if err != nil {
+		fmt.Println("Failed to create namespace: ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -306,6 +316,7 @@ func CreateWorkloadDeployment(createWorkloadConfig CreateWorkloadConfig) Respons
 
 	configmap, err := CreateConfigMap(configMap, namespace.Name, clientset, ctx, createWorkloadConfig)
 	if err != nil {
+		fmt.Println("Failed to create confgmap: ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -318,6 +329,7 @@ func CreateWorkloadDeployment(createWorkloadConfig CreateWorkloadConfig) Respons
 
 	_, err = clientset.AppsV1().Deployments(namespace.Name).Create(ctx, BuildDeployment(configmap.Name, deploymentName, createWorkloadConfig), metav1.CreateOptions{})
 	if err != nil {
+		fmt.Println("Failed to create pod: ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
@@ -442,6 +454,7 @@ func DeleteWorkloadAndCluster(deleteWorkloadCluster DeleteWorkloadConfig) Respon
 
 	_, err = containerService.Projects.Locations.Clusters.Delete(deleteWorkloadCluster.Parent).Context(ctx).Do()
 	if err != nil {
+		fmt.Println("Failed to delete cluster, ", err)
 		response = Response{
 			Status:     "Fail",
 			StatusCode: 400,
