@@ -88,6 +88,7 @@ func CreateConfigMap(configmap, namespace string, clientset kubernetes.Interface
 			"PAC_CONFIG_ID_TOKEN":    createWorkloadConfig.TokenId,
 			"PAC_CONFIG_DOMAIN":      createWorkloadConfig.Domain,
 			"PAC_CONFIG_CUSTOMER_ID": createWorkloadConfig.CusId,
+			"PAC_RESULT_ID":          createWorkloadConfig.ResultId,
 		},
 	}
 

@@ -26,6 +26,7 @@ type CreateWorkloadConfig struct {
 	TokenId         string `json:"tokenId" valid:"required"`
 	Domain          string `json:"domain" valid:"required"`
 	CusId           string `json:"cusId" valid:"required"`
+	ResultId        string `json:"resultId" valid:"-"`
 }
 
 type DeleteWorkloadConfig struct {
