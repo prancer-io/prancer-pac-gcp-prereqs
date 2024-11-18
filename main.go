@@ -186,9 +186,12 @@ func CreateCluster(createClusterConfig CreateClusterConfig) Response {
 		return response
 	}
 
+	network := GetEnv("DEFAULT_NETWORK", "default")
+
 	rb := &container.CreateClusterRequest{
 		Cluster: &container.Cluster{
 			Name:             createClusterConfig.ClusterName,
+			Network:          network,
 			InitialNodeCount: 1,
 			Autoscaling: &container.ClusterAutoscaling{
 				EnableNodeAutoprovisioning: true,

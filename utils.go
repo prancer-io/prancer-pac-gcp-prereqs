@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"golang.org/x/oauth2"
@@ -191,4 +192,11 @@ func WaitWorkloadToDelete(ctx context.Context, clientset kubernetes.Interface, n
 
 func DeleteNamespace(namespace string, clientset kubernetes.Interface, ctx context.Context) error {
 	return clientset.CoreV1().Namespaces().Delete(ctx, namespace, metav1.DeleteOptions{})
+}
+
+func GetEnv(key, defaultValue string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultValue
 }
