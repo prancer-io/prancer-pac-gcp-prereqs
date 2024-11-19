@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"golang.org/x/oauth2"
@@ -88,6 +89,7 @@ func CreateConfigMap(configmap, namespace string, clientset kubernetes.Interface
 			"PAC_CONFIG_ID_TOKEN":    createWorkloadConfig.TokenId,
 			"PAC_CONFIG_DOMAIN":      createWorkloadConfig.Domain,
 			"PAC_CONFIG_CUSTOMER_ID": createWorkloadConfig.CusId,
+			"PAC_RESULT_ID":          createWorkloadConfig.ResultId,
 		},
 	}
 
@@ -190,4 +192,11 @@ func WaitWorkloadToDelete(ctx context.Context, clientset kubernetes.Interface, n
 
 func DeleteNamespace(namespace string, clientset kubernetes.Interface, ctx context.Context) error {
 	return clientset.CoreV1().Namespaces().Delete(ctx, namespace, metav1.DeleteOptions{})
+}
+
+func GetEnv(key, defaultValue string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultValue
 }
