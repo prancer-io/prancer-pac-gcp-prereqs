@@ -1,11 +1,11 @@
 module example.com/prancer
 
-go 1.18
+go 1.23.0
 
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.5.2
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
-	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783
+	golang.org/x/oauth2 v0.27.0
 	google.golang.org/api v0.109.0
 	k8s.io/api v0.26.1
 	k8s.io/apimachinery v0.26.1
@@ -13,8 +13,7 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute v1.14.0 // indirect
-	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/cloudevents/sdk-go/v2 v2.6.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
